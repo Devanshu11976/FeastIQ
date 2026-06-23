@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FeastIQ - Feedback</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        .nav-link {
+            color: rgba(255,255,255,0.8) !important;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: white !important;
+        }
+        .feedback-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        .feedback-row-low {
+            background-color: #fff5f5;
+            border-left: 4px solid #ff4757;
+        }
+        .feedback-row-high {
+            background-color: #f0fff4;
+            border-left: 4px solid #2ed573;
+        }
+        .rating-stars {
+            color: #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="dashboard.html">
+                <i class="fas fa-utensils me-2"></i>FeastIQ Admin
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="orders.html">Orders</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="feedback.html">Feedback</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="customers.html">Customers</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="logout()">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h2 class="mb-4">Customer Feedback</h2>
+        
+        <div class="mb-3">
+            <label class="form-label">Filter by Rating:</label>
+            <select class="form-select" style="width: auto;" onchange="loadFeedback(1, this.value)">
+                <option value="">All Ratings</option>
+                <option value="1">1 Star</option>
+                <option value="2">2 Stars</option>
+                <option value="3">3 Stars</option>
+                <option value="4">4 Stars</option>
+                <option value="5">5 Stars</option>
+            </select>
+        </div>
+        
+        <div class="feedback-card">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Rating</th>
+                            <th>Comment</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="feedback-table">
+                        <tr>
+                            <td colspan="5" class="text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center" id="pagination">
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API_URL = 'http://localhost:5000';
+        let token = localStorage.getItem('admin_token');
+        let currentPage = 1;
+        let currentRatingFilter = '';
+        
+        if (!token) {
+            window.location.href = 'login.html';
+        }
+        
+        async function loadFeedback(page = 1, rating = '') {
+            try {
+                const headers = { 'Authorization': `Bearer ${token}` };
+                let url = `${API_URL}/feedback?page=${page}&per_page=10`;
+                if (rating) {
+                    url += `&rating=${rating}`;
+                }
+                
+                const response = await fetch(url, { headers });
+                const data = await response.json();
+                
+                const tbody = document.getElementById('feedback-table');
+                
+                if (data.feedbacks.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center">No feedback found</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = data.feedbacks.map(feedback => {
+                    const rowClass = feedback.rating <= 2 ? 'feedback-row-low' : (feedback.rating >= 4 ? 'feedback-row-high' : '');
+                    const stars = '★'.repeat(feedback.rating) + '☆'.repeat(5 - feedback.rating);
+                    
+                    return `
+                        <tr class="${rowClass}">
+                            <td><strong>#${feedback.order_id}</strong></td>
+                            <td>${feedback.customer_email || '-'}</td>
+                            <td>
+                                <span class="rating-stars">${stars}</span>
+                                <span class="ms-2">(${feedback.rating}/5)</span>
+                            </td>
+                            <td>${feedback.comment || '-'}</td>
+                            <td>${new Date(feedback.created_at).toLocaleDateString()}</td>
+                        </tr>
+                    `;
+                }).join('');
+                
+                // Update pagination
+                currentPage = page;
+                currentRatingFilter = rating;
+                updatePagination(data.pages, data.current_page);
+                
+            } catch (error) {
+                console.error('Error loading feedback:', error);
+            }
+        }
+        
+        function updatePagination(totalPages, currentPage) {
+            const pagination = document.getElementById('pagination');
+            let html = '';
+            
+            for (let i = 1; i <= totalPages; i++) {
+                html += `
+                    <li class="page-item ${i === currentPage ? 'active' : ''}">
+                        <a class="page-link" href="#" onclick="loadFeedback(${i}, '${currentRatingFilter}'); return false;">${i}</a>
+                    </li>
+                `;
+            }
+            
+            pagination.innerHTML = html;
+        }
+        
+        function logout() {
+            localStorage.removeItem('admin_token');
+            window.location.href = 'login.html';
+        }
+        
+        // Load feedback on page load
+        loadFeedback();
+    </script>
+</body>
+</html>

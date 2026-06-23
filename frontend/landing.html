@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FeastIQ — Order smart. Run smarter.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --tomato:#FF4D4D; --tomato-bright:#FF6B6B; --mango:#FFA63D; --mango-bright:#FFB85C;
+  --basil:#2ECC71; --basil-bright:#3FE08A; --gold:#F2B441; --gray:#9AA0A6;
+  --cream:#FFFBF5; --cream-soft:#FBF9F2; --charcoal:#1A1A1A; --charcoal-soft:#232323;
+  --charcoal-line:#33312e; --ink:#1A1A1A; --ink-soft:#5b5650;
+  --radius-lg:24px; --radius-md:18px; --radius-sm:12px;
+  --ease-bounce:cubic-bezier(.34,1.56,.64,1); --ease-out:cubic-bezier(.16,1,.3,1);
+  --shadow-tomato:0 10px 30px -8px rgba(255,77,77,.35);
+  --shadow-card:0 2px 6px rgba(36,31,27,.05),0 14px 32px -16px rgba(36,31,27,.12);
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+h1,h2,h3{font-family:'Poppins',sans-serif;margin:0;color:var(--ink);line-height:1.08;}
+p{margin:0;color:var(--ink-soft);line-height:1.6;}
+img,svg{display:block;}
+a{color:inherit;text-decoration:none;}
+ul{margin:0;padding:0;list-style:none;}
+button{font-family:inherit;border:none;background:none;cursor:pointer;}
+.skip-link{position:absolute;left:-999px;top:0;background:var(--charcoal);color:var(--cream);padding:.6rem 1rem;border-radius:0 0 8px 0;z-index:200;}
+.skip-link:focus{left:0;}
+:focus-visible{outline:3px solid var(--mango);outline-offset:3px;border-radius:4px;}
+.wrap{max-width:1200px;margin:0 auto;padding:0 28px;}
+.eyebrow{display:inline-flex;align-items:center;gap:.5rem;font-family:'JetBrains Mono',monospace;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;font-weight:500;color:var(--tomato);}
+.section .eyebrow::before{content:"●";font-size:.6rem;color:var(--mango);}
+.admin .eyebrow{color:var(--basil-bright);}
+.admin .eyebrow::before{color:var(--mango-bright);}
+.section-head{max-width:680px;margin:0 0 4rem;}
+.section-head h2{font-size:clamp(1.9rem,3.6vw,2.7rem);margin-top:.6rem;letter-spacing:-.01em;}
+.section-head p{margin-top:.9rem;font-size:1.05rem;max-width:560px;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.95rem 1.9rem;border-radius:999px;font-weight:600;font-size:.98rem;transition:transform .35s var(--ease-bounce),box-shadow .35s var(--ease-bounce);white-space:nowrap;}
+.btn:hover{transform:translateY(-2px) scale(1.045);}
+.btn:active{transform:scale(.96);}
+.btn-primary{background:linear-gradient(135deg,var(--tomato),var(--mango));color:#fff;box-shadow:var(--shadow-tomato);}
+.btn-outline{background:transparent;color:var(--charcoal);border:2px solid rgba(26,26,26,.2);}
+.admin .btn-outline,.cta .btn-outline{color:var(--cream);border-color:var(--cream);}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1rem 28px;background:rgba(255,251,245,.92);backdrop-filter:blur(14px);border-bottom:1px solid rgba(36,31,27,.06);}
+.nav-logo{font-family:'Poppins',sans-serif;font-weight:800;font-size:1.25rem;display:flex;align-items:center;gap:.4rem;}
+.nav-logo .dot{color:var(--tomato);}
+.nav-links{display:flex;gap:2rem;font-weight:500;font-size:.95rem;}
+.nav-links a{position:relative;padding:.3rem 0;color:var(--ink);}
+.nav-links a::after{content:"";position:absolute;left:0;bottom:-2px;width:0;height:2px;background:linear-gradient(90deg,var(--tomato),var(--mango));transition:width .3s var(--ease-out);}
+.nav-links a:hover::after{width:100%;}
+.nav-ctas{display:flex;gap:.7rem;align-items:center;}
+.nav-ctas .btn{padding:.65rem 1.3rem;font-size:.88rem;}
+.nav-toggle{display:none;font-size:1.6rem;background:none;border:none;}
+.nav-mobile{display:none;position:fixed;top:64px;left:0;right:0;background:var(--cream);padding:1.2rem 28px 1.6rem;flex-direction:column;gap:1rem;border-bottom:1px solid rgba(0,0,0,.06);box-shadow:0 14px 24px -16px rgba(0,0,0,.15);z-index:99;}
+.nav-mobile.open{display:flex;}
+@media(max-width:880px){.nav-links{display:none;}.nav-toggle{display:block;}.nav-ctas .btn-outline{display:none;}}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;padding:100px 28px 80px;background:radial-gradient(55% 60% at 70% 40%,rgba(255,166,61,.18),transparent 65%),radial-gradient(45% 50% at 20% 80%,rgba(46,204,113,.12),transparent 60%),radial-gradient(40% 40% at 85% 85%,rgba(255,77,77,.10),transparent 55%),var(--cream);position:relative;overflow:hidden;}
+.hero-inner{max-width:1200px;margin:0 auto;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;}
+.hero-left{position:relative;z-index:2;}
+.eyebrow-pill{display:inline-flex;align-items:center;gap:.5rem;font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;font-weight:500;color:var(--ink);background:#fff;border:1.5px solid rgba(26,26,26,.12);padding:.45rem 1rem;border-radius:999px;margin-bottom:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.eyebrow-pill .pill-dot{width:7px;height:7px;border-radius:50%;background:linear-gradient(135deg,var(--tomato),var(--mango));flex-shrink:0;}
+.hero h1{font-size:clamp(2.8rem,5.5vw,4.4rem);letter-spacing:-.025em;line-height:1.04;color:var(--ink);margin-bottom:1.2rem;}
+.hero h1 .line-orange{background:linear-gradient(120deg,var(--tomato) 10%,var(--mango) 90%);-webkit-background-clip:text;background-clip:text;color:transparent;display:block;}
+.hero-desc{font-size:1.05rem;color:var(--ink-soft);line-height:1.65;max-width:430px;margin-bottom:2.2rem;}
+.hero-desc strong{color:var(--ink);font-weight:600;}
+.hero-ctas{display:flex;gap:.9rem;flex-wrap:wrap;align-items:center;}
+.hero-ctas .btn{padding:1rem 2rem;font-size:.96rem;}
+.hero-stats{display:flex;gap:2rem;margin-top:2.6rem;padding-top:2rem;border-top:1px solid rgba(26,26,26,.08);}
+.stat-num{font-family:'Poppins',sans-serif;font-weight:800;font-size:1.6rem;color:var(--ink);line-height:1;}
+.stat-label{font-size:.75rem;color:var(--ink-soft);margin-top:.3rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.05em;}
+
+/* HERO RIGHT */
+.hero-right{position:relative;display:flex;align-items:center;justify-content:center;z-index:2;}
+.hero-img-wrap{position:relative;width:420px;height:420px;}
+.hero-orb{position:absolute;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(255,166,61,.30) 0%,rgba(255,77,77,.16) 50%,transparent 75%);top:50%;left:50%;transform:translate(-50%,-50%);filter:blur(32px);}
+.hero-burger-svg{position:relative;z-index:2;width:100%;height:100%;animation:heroBob 3.5s ease-in-out infinite;}
+@keyframes heroBob{0%,100%{transform:translateY(0) rotate(-1deg);}50%{transform:translateY(-16px) rotate(1deg);}}
+.badge{position:absolute;background:#fff;border-radius:999px;padding:.55rem 1.1rem .55rem .65rem;display:flex;align-items:center;gap:.55rem;font-size:.82rem;font-weight:600;color:var(--ink);box-shadow:0 8px 28px rgba(0,0,0,.13);white-space:nowrap;z-index:4;}
+.badge-icon{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;}
+.badge-analytics{top:4%;right:-10%;animation:badgeFloat 4s ease-in-out infinite;}
+.badge-analytics .badge-icon{background:rgba(255,77,77,.12);}
+.badge-crm{right:-14%;bottom:30%;animation:badgeFloat 4s ease-in-out infinite .8s;}
+.badge-crm .badge-icon{background:rgba(46,204,113,.12);}
+.badge-orders{bottom:8%;left:-6%;animation:badgeFloat 4s ease-in-out infinite 1.6s;}
+.badge-orders .badge-icon{background:rgba(255,166,61,.15);}
+@keyframes badgeFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-9px);}}
+.hero-dot{position:absolute;border-radius:50%;z-index:1;}
+.hero-dot-1{width:10px;height:10px;background:var(--tomato);top:15%;left:0%;opacity:.7;}
+.hero-dot-2{width:7px;height:7px;background:var(--basil);top:44%;right:1%;opacity:.6;}
+.hero-dot-3{width:12px;height:12px;background:var(--mango);bottom:20%;right:8%;opacity:.5;}
+.scroll-indicator{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.4rem;font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.08em;color:var(--ink-soft);z-index:2;text-transform:uppercase;}
+.scroll-indicator svg{animation:bounce 1.8s infinite;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(7px);}}
+@media(max-width:860px){
+  .hero{padding:90px 20px 100px;}
+  .hero-inner{grid-template-columns:1fr;text-align:center;}
+  .hero-desc{max-width:100%;margin:0 auto 2.2rem;}
+  .hero-ctas{justify-content:center;}
+  .hero-stats{justify-content:center;}
+  .hero-right{margin-top:2rem;}
+  .hero-img-wrap{width:280px;height:280px;}
+  .badge-analytics{right:-2%;top:-2%;}
+  .badge-crm{right:-6%;bottom:25%;}
+  .badge-orders{left:-3%;bottom:2%;}
+}
+
+[data-reveal]{opacity:0;transform:translateY(28px) scale(.98);transition:opacity .7s var(--ease-out),transform .7s var(--ease-out);}
+[data-reveal].visible{opacity:1;transform:translateY(0) scale(1);}
+
+.section{padding:9.5rem 0;position:relative;}
+.admin{background:var(--charcoal);color:var(--cream);}
+.admin h2,.admin h3{color:var(--cream);}
+.admin p{color:#bdb9b2;}
+.cta{background:var(--charcoal);color:var(--cream);text-align:center;}
+.cta h2{color:var(--cream);font-size:clamp(2rem,4.4vw,3rem);}
+.cta p{color:#bdb9b2;margin:1rem auto 0;}
+
+.customer-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2rem;}
+.customer-card{background:#fff;border-radius:var(--radius-lg);padding:2.3rem;box-shadow:var(--shadow-card);border:1px solid rgba(36,31,27,.05);transition:transform .4s var(--ease-bounce),box-shadow .4s var(--ease-bounce);}
+.customer-card:hover{transform:translateY(-6px);box-shadow:0 18px 40px -16px rgba(255,77,77,.25);}
+.customer-card .icon{font-size:1.8rem;margin-bottom:1.1rem;}
+.customer-card h3{font-size:1.18rem;margin-bottom:.6rem;}
+.customer-card p{font-size:.94rem;}
+.customer-card.wide{grid-column:span 2;}
+@media(max-width:620px){.customer-grid{grid-template-columns:1fr;}.customer-card.wide{grid-column:span 1;}}
+.cat-pills{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.9rem;}
+.cat-pill{font-size:.8rem;padding:.35rem .8rem;border-radius:999px;background:var(--cream-soft);border:1px solid rgba(36,31,27,.08);display:flex;align-items:center;gap:.35rem;transition:background .3s,transform .3s;}
+.cat-pill:hover{background:#fff0e4;transform:translateY(-2px);}
+.mini-cart{margin-top:1rem;border-top:1px dashed rgba(36,31,27,.12);padding-top:.9rem;}
+.mini-cart-row{display:flex;justify-content:space-between;align-items:center;font-size:.85rem;padding:.3rem 0;opacity:0;animation:flyIn .5s var(--ease-bounce) forwards;}
+.mini-cart-row:nth-child(1){animation-delay:.15s;}.mini-cart-row:nth-child(2){animation-delay:.4s;}.mini-cart-row:nth-child(3){animation-delay:.65s;}
+@keyframes flyIn{from{opacity:0;transform:translateX(18px);}to{opacity:1;transform:translateX(0);}}
+.qty-stepper{display:flex;align-items:center;gap:.4rem;font-weight:600;}
+.qty-stepper button{width:20px;height:20px;border-radius:50%;background:var(--cream-soft);border:1px solid rgba(0,0,0,.1);font-size:.85rem;line-height:1;display:flex;align-items:center;justify-content:center;}
+.mini-cart-total{display:flex;justify-content:space-between;font-weight:700;margin-top:.5rem;font-size:.9rem;}
+.mini-form{margin-top:1rem;display:flex;flex-direction:column;gap:.6rem;}
+.mini-form .field{font-size:.82rem;padding:.55rem .8rem;border-radius:10px;background:var(--cream-soft);border:1px solid rgba(36,31,27,.1);color:var(--ink-soft);}
+.mini-submit{margin-top:.3rem;align-self:flex-start;padding:.5rem 1.2rem;border-radius:999px;background:linear-gradient(135deg,var(--tomato),var(--mango));color:#fff;font-size:.82rem;font-weight:600;transition:transform .3s var(--ease-bounce);}
+.mini-submit:hover{transform:scale(1.05);}
+.mini-submit .check{display:none;}
+.mini-submit.done .label{display:none;}
+.mini-submit.done .check{display:inline;}
+.star-row{display:flex;gap:.3rem;margin-top:1rem;font-size:1.5rem;}
+.star-row button{color:#e5e1d8;transition:transform .25s var(--ease-bounce),color .25s;}
+.star-row button.active,.star-row button:hover{color:var(--mango);transform:scale(1.25) rotate(-6deg);}
+.feedback-note{margin-top:.7rem;font-size:.82rem;padding:.6rem .8rem;border-radius:10px;background:var(--cream-soft);color:var(--ink-soft);}
+.tracker{margin-top:1.4rem;position:relative;padding-top:1.6rem;}
+.tracker-line{position:relative;height:4px;background:rgba(36,31,27,.1);border-radius:4px;margin:0 8px;}
+.tracker-fill{position:absolute;left:0;top:0;height:100%;border-radius:4px;background:linear-gradient(90deg,var(--tomato),var(--mango),var(--basil));animation:fillTrack 8s linear infinite;}
+@keyframes fillTrack{0%{width:0%;}80%,100%{width:100%;}}
+.tracker-steps{display:flex;justify-content:space-between;margin-top:.7rem;}
+.tracker-step{display:flex;flex-direction:column;align-items:center;gap:.4rem;flex:1;font-size:.72rem;color:var(--ink-soft);text-align:center;}
+.tracker-dot{width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid rgba(36,31,27,.15);}
+.tracker-mover{position:absolute;top:-14px;font-size:1.3rem;left:0;animation:moveTrack 8s linear infinite;}
+@keyframes moveTrack{0%{left:0%;}80%,100%{left:calc(100% - 14px);}}
+
+.admin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6rem;margin-bottom:4rem;}
+.admin-card{background:var(--charcoal-soft);border:1px solid var(--charcoal-line);border-radius:var(--radius-lg);padding:2rem;transition:transform .4s var(--ease-bounce),border-color .3s;}
+.admin-card:hover{transform:translateY(-6px);border-color:var(--basil-bright);}
+.admin-card .icon{font-size:1.6rem;margin-bottom:.9rem;}
+.admin-card h3{font-size:1.08rem;}
+.admin-card p{font-size:.88rem;margin-top:.5rem;}
+.admin-card.wide{grid-column:span 3;}
+@media(max-width:980px){.admin-grid{grid-template-columns:repeat(2,1fr);}.admin-card.wide{grid-column:span 2;}}
+@media(max-width:620px){.admin-grid{grid-template-columns:1fr;}.admin-card.wide{grid-column:span 1;}}
+.mini-login{margin-top:1rem;display:flex;flex-direction:column;gap:.5rem;}
+.mini-login .field{font-size:.8rem;padding:.5rem .7rem;border-radius:8px;background:#1d1d1d;border:1px solid #3a3a3a;color:#9d9a94;}
+.mini-login .lock{display:flex;align-items:center;gap:.4rem;font-size:.78rem;color:var(--basil-bright);margin-top:.2rem;}
+.mini-menu-row{display:flex;justify-content:space-between;align-items:center;font-size:.82rem;padding:.45rem 0;border-bottom:1px solid var(--charcoal-line);}
+.mini-menu-row:last-child{border-bottom:none;}
+.row-actions{display:flex;gap:.4rem;font-size:.75rem;}
+.row-actions span{padding:.15rem .5rem;border-radius:6px;background:#1d1d1d;color:#9d9a94;}
+.kanban{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin-top:1rem;}
+.kanban-col{background:#1d1d1d;border-radius:12px;padding:.7rem;min-height:120px;}
+.kanban-col h4{font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:#9d9a94;margin:0 0 .5rem;font-family:'JetBrains Mono',monospace;}
+.kanban-card{background:#262626;border-radius:8px;padding:.5rem .6rem;font-size:.78rem;margin-bottom:.4rem;border:1px solid #3a3a3a;position:relative;}
+.kanban-card.moving{animation:pulseGlow 2.2s ease-in-out infinite;border-color:var(--basil-bright);}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 0 0 rgba(63,224,138,.35);}50%{box-shadow:0 0 0 6px rgba(63,224,138,0);}}
+.kanban-arrow{position:absolute;top:50%;right:-1.1rem;transform:translateY(-50%);color:var(--basil-bright);font-size:.9rem;}
+.fb-filters{display:flex;gap:.4rem;margin-top:.9rem;flex-wrap:wrap;}
+.fb-chip{font-size:.72rem;padding:.25rem .65rem;border-radius:999px;background:#1d1d1d;border:1px solid #3a3a3a;color:#9d9a94;transition:all .25s;}
+.fb-chip.active{background:var(--mango-bright);color:#1a1a1a;border-color:var(--mango-bright);}
+.fb-list{margin-top:.7rem;display:flex;flex-direction:column;gap:.4rem;}
+.fb-item{display:flex;justify-content:space-between;font-size:.8rem;background:#1d1d1d;padding:.5rem .65rem;border-radius:8px;}
+.fb-stars{color:var(--mango-bright);letter-spacing:1px;}
+
+.analytics h3{font-size:1.4rem;margin-bottom:.4rem;}
+.analytics > p{margin-bottom:2.2rem;font-size:.95rem;}
+.analytics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6rem;}
+.chart-card{background:var(--charcoal-soft);border:1px solid var(--charcoal-line);border-radius:var(--radius-lg);padding:1.9rem;grid-column:span 1;}
+.chart-card h4{font-size:.92rem;font-weight:600;color:var(--cream);margin-bottom:.2rem;}
+.chart-card .sub{font-size:.74rem;color:#9d9a94;font-family:'JetBrains Mono',monospace;margin-bottom:1.1rem;display:block;}
+.chart-card.trend-card{grid-column:span 2;}
+.chart-card.metric-card{grid-column:span 1;display:flex;flex-direction:column;justify-content:center;}
+.chart-card.dual-gauge{grid-column:span 2;}
+@media(max-width:980px){.analytics-grid{grid-template-columns:repeat(2,1fr);}.chart-card{grid-column:span 2 !important;}}
+@media(max-width:620px){.analytics-grid{grid-template-columns:1fr;}.chart-card{grid-column:span 1 !important;}}
+.line-chart-path{fill:none;stroke:var(--basil-bright);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;}
+.line-chart-area{fill:url(#areaGradient);opacity:0;transition:opacity 1s ease .4s;}
+[data-reveal].visible .line-chart-area{opacity:1;}
+.bars-row{display:flex;align-items:flex-end;gap:.35rem;height:110px;}
+.bar{flex:1;background:linear-gradient(180deg,var(--mango-bright),var(--tomato-bright));border-radius:4px 4px 2px 2px;transform:scaleY(0);transform-origin:bottom;transition:transform .9s var(--ease-out);}
+.bars-axis{display:flex;justify-content:space-between;font-size:.6rem;color:#7a7770;margin-top:.4rem;font-family:'JetBrains Mono',monospace;}
+.rank-list{display:flex;flex-direction:column;gap:.6rem;}
+.rank-row{display:flex;align-items:center;gap:.6rem;font-size:.8rem;}
+.rank-num{font-family:'JetBrains Mono',monospace;color:#9d9a94;width:1.2rem;}
+.rank-name{width:78px;flex-shrink:0;color:var(--cream);}
+.rank-track{flex:1;height:8px;background:#1d1d1d;border-radius:6px;overflow:hidden;}
+.rank-fill{height:100%;width:0%;border-radius:6px;background:linear-gradient(90deg,var(--basil-bright),var(--mango-bright));transition:width 1s var(--ease-out);}
+.metric-number{font-family:'Poppins',sans-serif;font-weight:800;font-size:2.6rem;color:var(--cream);}
+.metric-label{font-size:.78rem;color:#9d9a94;margin-top:.3rem;font-family:'JetBrains Mono',monospace;}
+.rating-bars{display:flex;flex-direction:column;gap:.5rem;}
+.rating-row{display:flex;align-items:center;gap:.6rem;font-size:.76rem;color:#9d9a94;}
+.rating-row .stars{width:54px;color:var(--mango-bright);flex-shrink:0;}
+.rating-track{flex:1;height:8px;background:#1d1d1d;border-radius:6px;overflow:hidden;}
+.rating-fill{height:100%;width:0%;border-radius:6px;background:linear-gradient(90deg,var(--tomato-bright),var(--mango-bright));transition:width 1s var(--ease-out);}
+.donut-wrap{display:flex;align-items:center;gap:1.4rem;}
+.donut-svg{transform:scale(0) rotate(-90deg);transition:transform 1s var(--ease-bounce);transform-origin:50% 50%;}
+[data-reveal].visible .donut-svg{transform:scale(1) rotate(0deg);}
+.donut-legend{display:flex;flex-direction:column;gap:.5rem;font-size:.78rem;}
+.legend-row{display:flex;align-items:center;gap:.5rem;color:#cfcbc3;}
+.legend-dot{width:9px;height:9px;border-radius:50%;}
+.gauge-row{display:flex;gap:2rem;justify-content:space-around;}
+.gauge{display:flex;flex-direction:column;align-items:center;gap:.6rem;}
+.gauge-svg circle{fill:none;}
+.gauge-bg{stroke:#1d1d1d;stroke-width:9;}
+.gauge-fill{stroke-width:9;stroke-linecap:round;transition:stroke-dashoffset 1.4s var(--ease-out);}
+.gauge-label{font-size:.78rem;color:#9d9a94;font-family:'JetBrains Mono',monospace;text-align:center;}
+.gauge-pct{font-family:'Poppins',sans-serif;font-weight:700;font-size:1.05rem;fill:var(--cream);}
+
+.crm{background:var(--cream-soft);}
+.crm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.8rem;}
+.crm-card{background:#fff;border-radius:var(--radius-lg);padding:2.2rem;box-shadow:var(--shadow-card);border:1px solid rgba(36,31,27,.05);}
+.crm-card h3{font-size:1.1rem;margin-bottom:.5rem;}
+.crm-card p{font-size:.88rem;}
+@media(max-width:920px){.crm-grid{grid-template-columns:1fr;}}
+.buckets{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-top:1.1rem;}
+.bucket{border-radius:12px;padding:.6rem .4rem;text-align:center;border:1px dashed rgba(36,31,27,.15);}
+.bucket-label{font-size:.62rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:.4rem;color:var(--ink-soft);}
+.bucket-dots{display:flex;flex-wrap:wrap;gap:.25rem;justify-content:center;}
+.bucket-dots span{width:9px;height:9px;border-radius:50%;opacity:0;transform:scale(0);animation:popDot .4s var(--ease-bounce) forwards;}
+.bucket.vip span{background:var(--gold);}.bucket.regular span{background:var(--basil);}.bucket.occasional span{background:var(--mango);}.bucket.inactive span{background:var(--gray);}
+.bucket-dots span:nth-child(1){animation-delay:.1s;}.bucket-dots span:nth-child(2){animation-delay:.25s;}.bucket-dots span:nth-child(3){animation-delay:.4s;}.bucket-dots span:nth-child(4){animation-delay:.55s;}.bucket-dots span:nth-child(5){animation-delay:.7s;}.bucket-dots span:nth-child(6){animation-delay:.85s;}
+@keyframes popDot{to{opacity:1;transform:scale(1);}}
+.profile-flip{margin-top:1.1rem;perspective:1000px;height:160px;}
+.profile-inner{position:relative;width:100%;height:100%;transition:transform .7s var(--ease-bounce);transform-style:preserve-3d;}
+.profile-flip:hover .profile-inner,.profile-flip:focus-within .profile-inner{transform:rotateY(180deg);}
+.profile-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:14px;padding:1rem;background:var(--cream-soft);border:1px solid rgba(36,31,27,.08);}
+.profile-face.back{transform:rotateY(180deg);display:flex;flex-direction:column;gap:.4rem;justify-content:center;}
+.profile-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--tomato),var(--mango));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;}
+.profile-tag{display:inline-block;margin-top:.5rem;font-size:.66rem;padding:.2rem .55rem;border-radius:999px;background:var(--gold);color:#1a1a1a;font-weight:700;}
+.profile-hint{font-size:.7rem;color:var(--ink-soft);margin-top:.6rem;font-family:'JetBrains Mono',monospace;}
+.timeline-row{font-size:.72rem;display:flex;justify-content:space-between;color:var(--ink-soft);}
+.spark-wrap{margin-top:1rem;}
+.spark-path{stroke-dasharray:300;stroke-dashoffset:300;transition:stroke-dashoffset 1.4s var(--ease-out);}
+[data-reveal].visible .spark-path{stroke-dashoffset:0;}
+
+.tech{background:var(--cream);}
+.tech-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.3rem;}
+.tech-tile{background:#fff;border:1px solid rgba(36,31,27,.08);border-radius:var(--radius-sm);padding:1.5rem 1.6rem;display:flex;align-items:center;gap:.8rem;transition:transform .3s var(--ease-out),border-color .3s;}
+.tech-tile:hover{transform:translateY(-3px);border-color:var(--basil);}
+.tech-tile .t-icon{font-size:1.3rem;}
+.tech-tile .t-text{font-size:.88rem;color:var(--ink);}
+.tech-tile code{font-size:.84rem;background:var(--cream-soft);padding:.1rem .4rem;border-radius:5px;color:var(--tomato);}
+@media(max-width:880px){.tech-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:560px){.tech-grid{grid-template-columns:1fr;}}
+
+.cta{padding:7rem 0;}
+.cta-emoji-row{display:flex;gap:1.6rem;justify-content:center;font-size:2.4rem;margin-bottom:1.6rem;}
+.cta-emoji-row span{animation:floaty 4s ease-in-out infinite;}
+.cta-emoji-row span:nth-child(2){animation-delay:.5s;}.cta-emoji-row span:nth-child(3){animation-delay:1s;}.cta-emoji-row span:nth-child(4){animation-delay:1.5s;}
+@keyframes floaty{0%,100%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-14px) rotate(6deg);}}
+.footer{background:var(--charcoal);color:#9d9a94;padding:2.6rem 0;border-top:1px solid var(--charcoal-line);}
+.footer-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+.footer-links{display:flex;gap:1.4rem;font-size:.85rem;}
+.footer-links a:hover{color:var(--cream);}
+.footer-social{display:flex;gap:.8rem;font-size:1.1rem;}
+.footer-social a{transition:transform .3s var(--ease-bounce);}
+.footer-social a:hover{transform:translateY(-3px) scale(1.15);}
+.footer-tag{font-size:.78rem;margin-top:.6rem;color:#6f6c66;}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto;}*{animation-duration:.001s !important;animation-iteration-count:1 !important;transition-duration:.2s !important;}[data-reveal]{transform:none;}}
+</style>
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to content</a>
+<nav class="nav">
+  <a href="#hero" class="nav-logo">FeastIQ<span class="dot">.</span></a>
+  <div class="nav-links">
+    <a href="#customers">Customers</a>
+    <a href="#admin">For restaurants</a>
+    <a href="#crm">CRM</a>
+    <a href="#tech">Tech</a>
+  </div>
+  <div class="nav-ctas">
+    <a href="admin/login.html" class="btn btn-outline">Restaurant Login</a>
+    <a href="customer/index.html" class="btn btn-primary">Order Now</a>
+  </div>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+</nav>
+<div class="nav-mobile" id="navMobile">
+  <a href="#customers">Customers</a>
+  <a href="#admin">For restaurants</a>
+  <a href="#crm">CRM</a>
+  <a href="#tech">Tech</a>
+  <a href="admin/login.html" class="btn btn-outline">Restaurant Login</a>
+  <a href="customer/index.html" class="btn btn-primary">Order Now</a>
+</div>
+
+<header class="hero" id="hero">
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="eyebrow-pill">
+        <span class="pill-dot"></span>
+        Ordering platform + built-in CRM
+      </div>
+      <h1>Order smart.<br><span class="line-orange">Run smarter.</span></h1>
+      <p class="hero-desc">FeastIQ takes customers from menu to delivered order in a few taps — and gives restaurants a <strong>live analytics &amp; CRM engine</strong> running underneath, automatically.</p>
+      <div class="hero-ctas">
+        <a href="customer/index.html" class="btn btn-primary"><span>🍔</span> Order Now</a>
+        <a href="admin/login.html" class="btn btn-outline"><span>🏪</span> Restaurant Login</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item"><div class="stat-num">2 min</div><div class="stat-label">Avg. order time</div></div>
+        <div class="stat-item"><div class="stat-num">4.9★</div><div class="stat-label">Customer rating</div></div>
+        <div class="stat-item"><div class="stat-num">Live</div><div class="stat-label">Analytics engine</div></div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-dot hero-dot-1"></div>
+      <div class="hero-dot hero-dot-2"></div>
+      <div class="hero-dot hero-dot-3"></div>
+      <div class="badge badge-analytics"><div class="badge-icon">📊</div>Live Analytics</div>
+      <div class="badge badge-crm"><div class="badge-icon">👥</div>CRM Built-In</div>
+      <div class="badge badge-orders"><div class="badge-icon" style="background:rgba(46,204,113,.15)">✅</div>Faster Orders</div>
+      <div class="hero-img-wrap">
+        <div class="hero-orb"></div>
+        <svg class="hero-burger-svg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="200" cy="358" rx="110" ry="18" fill="rgba(0,0,0,0.10)"/>
+          <ellipse cx="200" cy="300" rx="118" ry="36" fill="#E8953A"/>
+          <ellipse cx="200" cy="290" rx="118" ry="28" fill="#F0A344"/>
+          <ellipse cx="200" cy="285" rx="118" ry="22" fill="#F2B050"/>
+          <ellipse cx="200" cy="263" rx="122" ry="26" fill="#4A2E14"/>
+          <ellipse cx="200" cy="255" rx="122" ry="20" fill="#5C3A1E"/>
+          <path d="M155 258 Q175 252 195 258" stroke="#3a2510" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+          <path d="M205 255 Q225 249 245 255" stroke="#3a2510" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+          <rect x="80" y="232" width="240" height="18" rx="6" fill="#FFC84D" transform="rotate(-1 200 241)"/>
+          <polygon points="80,232 70,248 86,248" fill="#FFBC38"/>
+          <polygon points="320,232 330,248 314,248" fill="#FFBC38"/>
+          <ellipse cx="200" cy="228" rx="115" ry="17" fill="#E5463C"/>
+          <ellipse cx="200" cy="222" rx="115" ry="13" fill="#EF5C52"/>
+          <path d="M150 222 Q160 216 170 222" stroke="rgba(255,255,255,0.3)" stroke-width="2" fill="none"/>
+          <path d="M200 218 Q210 212 220 218" stroke="rgba(255,255,255,0.3)" stroke-width="2" fill="none"/>
+          <path d="M240 222 Q250 216 260 222" stroke="rgba(255,255,255,0.3)" stroke-width="2" fill="none"/>
+          <ellipse cx="200" cy="210" rx="128" ry="16" fill="#2ABF68"/>
+          <path d="M72 210 Q88 196 104 210 Q120 196 136 210 Q152 196 168 210 Q184 196 200 210 Q216 196 232 210 Q248 196 264 210 Q280 196 296 210 Q312 196 328 210" stroke="#3FD97A" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <ellipse cx="200" cy="196" rx="120" ry="20" fill="#E8A03A"/>
+          <path d="M82 196 Q84 130 200 118 Q316 130 318 196 Z" fill="#F2B050"/>
+          <ellipse cx="180" cy="152" rx="42" ry="22" fill="rgba(255,255,255,0.18)" transform="rotate(-15 180 152)"/>
+          <path d="M82 196 Q84 155 110 135 Q110 175 82 196Z" fill="rgba(0,0,0,0.07)"/>
+          <path d="M318 196 Q316 155 290 135 Q290 175 318 196Z" fill="rgba(0,0,0,0.07)"/>
+          <ellipse cx="170" cy="145" rx="10" ry="5" fill="#FFF3D6" transform="rotate(-20 170 145)"/>
+          <ellipse cx="200" cy="133" rx="10" ry="5" fill="#FFF3D6" transform="rotate(5 200 133)"/>
+          <ellipse cx="230" cy="145" rx="10" ry="5" fill="#FFF3D6" transform="rotate(18 230 145)"/>
+          <ellipse cx="185" cy="162" rx="9" ry="4.5" fill="#FFF3D6" transform="rotate(-10 185 162)"/>
+          <ellipse cx="218" cy="158" rx="9" ry="4.5" fill="#FFF3D6" transform="rotate(15 218 158)"/>
+          <ellipse cx="153" cy="162" rx="8" ry="4" fill="#FFF3D6" transform="rotate(-25 153 162)"/>
+          <ellipse cx="248" cy="160" rx="8" ry="4" fill="#FFF3D6" transform="rotate(22 248 160)"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+  <a href="#customers" class="scroll-indicator" aria-label="Scroll down">
+    <span>SCROLL</span>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </a>
+</header>
+
+<main id="main">
+<section class="section customers" id="customers">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">For customers</span>
+      <h2>Everything they need to order, in a few taps.</h2>
+      <p>From browsing the menu to rating a delivered meal — every step is fast, tracked, and built for mobile.</p>
+    </div>
+    <div class="customer-grid">
+      <article class="customer-card" data-reveal>
+        <div class="icon">🍔</div>
+        <h3>Menu Browsing</h3>
+        <p>Items organized by category, so finding the right thing never feels like work.</p>
+        <div class="cat-pills">
+          <span class="cat-pill">🍔 Burgers</span><span class="cat-pill">🍕 Pizza</span><span class="cat-pill">🥤 Drinks</span><span class="cat-pill">🍟 Sides</span><span class="cat-pill">🧁 Desserts</span>
+        </div>
+      </article>
+      <article class="customer-card" data-reveal>
+        <div class="icon">🛒</div>
+        <h3>Cart Management</h3>
+        <p>Add items, adjust quantities, watch the total update instantly.</p>
+        <div class="mini-cart">
+          <div class="mini-cart-row"><span>Classic Cheeseburger</span><span class="qty-stepper"><button aria-label="Decrease">–</button>2<button aria-label="Increase">+</button></span></div>
+          <div class="mini-cart-row"><span>Loaded Fries</span><span class="qty-stepper"><button aria-label="Decrease">–</button>1<button aria-label="Increase">+</button></span></div>
+          <div class="mini-cart-row"><span>Iced Lemonade</span><span class="qty-stepper"><button aria-label="Decrease">–</button>2<button aria-label="Increase">+</button></span></div>
+          <div class="mini-cart-total"><span>Total</span><span>$24.50</span></div>
+        </div>
+      </article>
+      <article class="customer-card" data-reveal>
+        <div class="icon">📝</div>
+        <h3>Order Placement</h3>
+        <p>Submit an order with just an email or phone number — no account required.</p>
+        <div class="mini-form">
+          <div class="field">📧  jordan@email.com</div>
+          <div class="field">📱  (555) 010-2468</div>
+          <button class="mini-submit" id="submitDemo"><span class="label">Place Order →</span><span class="check">Order placed ✓</span></button>
+        </div>
+      </article>
+      <article class="customer-card wide" data-reveal>
+        <div class="icon">📦</div>
+        <h3>Order Tracking</h3>
+        <p>Real-time status updates from the kitchen to the doorstep.</p>
+        <div class="tracker">
+          <div class="tracker-line">
+            <div class="tracker-fill"></div>
+            <span class="tracker-mover">🛵</span>
+          </div>
+          <div class="tracker-steps">
+            <div class="tracker-step"><span class="tracker-dot"></span>Pending</div>
+            <div class="tracker-step"><span class="tracker-dot"></span>Confirmed</div>
+            <div class="tracker-step"><span class="tracker-dot"></span>Preparing</div>
+            <div class="tracker-step"><span class="tracker-dot"></span>Ready</div>
+            <div class="tracker-step"><span class="tracker-dot"></span>Delivered</div>
+          </div>
+        </div>
+      </article>
+      <article class="customer-card" data-reveal>
+        <div class="icon">⭐</div>
+        <h3>Feedback Submission</h3>
+        <p>Rate delivered orders 1–5 stars and leave a comment for the kitchen.</p>
+        <div class="star-row" id="starRow">
+          <button data-i="1">★</button><button data-i="2">★</button><button data-i="3">★</button><button data-i="4">★</button><button data-i="5">★</button>
+        </div>
+        <div class="feedback-note">"Fries were perfectly crispy, order arrived early!"</div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section admin" id="admin">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">For restaurant staff</span>
+      <h2>Run the kitchen and the business, from one screen.</h2>
+      <p>Secure staff tools for the day-to-day, plus an analytics layer that turns every order into a decision.</p>
+    </div>
+    <div class="admin-grid">
+      <article class="admin-card" data-reveal>
+        <div class="icon">🔐</div><h3>Authentication</h3><p>Secure staff login with JWT tokens.</p>
+        <div class="mini-login">
+          <div class="field">manager@feastiq.io</div><div class="field">••••••••</div>
+          <div class="lock">🔒 Token verified</div>
+        </div>
+      </article>
+      <article class="admin-card" data-reveal>
+        <div class="icon">🧾</div><h3>Menu Management</h3><p>Add, edit, or delete items in seconds.</p>
+        <div class="mini-menu-row"><span>Smoky BBQ Burger</span><span class="row-actions"><span>Edit</span></span></div>
+        <div class="mini-menu-row"><span>Margherita Pizza</span><span class="row-actions"><span>Edit</span></span></div>
+        <div class="mini-menu-row"><span>+ Add new item</span><span class="row-actions"><span>New</span></span></div>
+      </article>
+      <article class="admin-card" data-reveal>
+        <div class="icon">💬</div><h3>Feedback Management</h3><p>Browse all feedback, filter by rating.</p>
+        <div class="fb-filters"><span class="fb-chip">All</span><span class="fb-chip active">★★★★★</span><span class="fb-chip">★★★</span></div>
+        <div class="fb-list">
+          <div class="fb-item"><span>"Best fries in town"</span><span class="fb-stars">★★★★★</span></div>
+          <div class="fb-item"><span>"Quick delivery"</span><span class="fb-stars">★★★★★</span></div>
+        </div>
+      </article>
+      <article class="admin-card wide" data-reveal>
+        <div class="icon">📋</div><h3>Order Management</h3><p>View every order and move it through the workflow.</p>
+        <div class="kanban">
+          <div class="kanban-col"><h4>Pending</h4><div class="kanban-card">#1042 · Table app</div></div>
+          <div class="kanban-col"><h4>Preparing</h4><div class="kanban-card moving">#1041 · Burger combo<span class="kanban-arrow">→</span></div></div>
+          <div class="kanban-col"><h4>Ready</h4><div class="kanban-card">#1039 · Pizza, 2x</div></div>
+        </div>
+      </article>
+    </div>
+    <div class="analytics">
+      <h3>Analytics dashboard</h3>
+      <p>Every metric a restaurant actually checks — updating from real order data.</p>
+      <div class="analytics-grid">
+        <div class="chart-card trend-card" data-reveal>
+          <h4>Daily orders trend</h4><span class="sub">last 30 days</span>
+          <svg viewBox="0 0 280 110" width="100%" height="110">
+            <defs><linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3FE08A" stop-opacity="0.35"/><stop offset="100%" stop-color="#3FE08A" stop-opacity="0"/></linearGradient></defs>
+            <polygon class="line-chart-area" points="0,95 20,80 40,85 60,60 80,68 100,45 120,55 140,38 160,48 180,30 200,40 220,22 240,32 260,18 280,25 280,110 0,110"/>
+            <polyline class="line-chart-path" id="trendLine" points="0,95 20,80 40,85 60,60 80,68 100,45 120,55 140,38 160,48 180,30 200,40 220,22 240,32 260,18 280,25"/>
+          </svg>
+        </div>
+        <div class="chart-card" data-reveal>
+          <h4>Peak hours analysis</h4><span class="sub">orders by hour</span>
+          <div class="bars-row" id="peakBars">
+            <div class="bar" data-h="25"></div><div class="bar" data-h="15"></div><div class="bar" data-h="10"></div>
+            <div class="bar" data-h="40"></div><div class="bar" data-h="65"></div><div class="bar" data-h="55"></div>
+            <div class="bar" data-h="90"></div><div class="bar" data-h="100"></div><div class="bar" data-h="70"></div>
+            <div class="bar" data-h="45"></div><div class="bar" data-h="60"></div><div class="bar" data-h="35"></div>
+          </div>
+          <div class="bars-axis"><span>11am</span><span>2pm</span><span>5pm</span><span>8pm</span><span>10pm</span></div>
+        </div>
+        <div class="chart-card" data-reveal>
+          <h4>Popular items ranking</h4><span class="sub">by orders this month</span>
+          <div class="rank-list" id="rankList">
+            <div class="rank-row"><span class="rank-num">1</span><span class="rank-name">Cheeseburger</span><div class="rank-track"><div class="rank-fill" data-w="92"></div></div></div>
+            <div class="rank-row"><span class="rank-num">2</span><span class="rank-name">Margherita</span><div class="rank-track"><div class="rank-fill" data-w="78"></div></div></div>
+            <div class="rank-row"><span class="rank-num">3</span><span class="rank-name">Loaded Fries</span><div class="rank-track"><div class="rank-fill" data-w="64"></div></div></div>
+            <div class="rank-row"><span class="rank-num">4</span><span class="rank-name">Iced Lemonade</span><div class="rank-track"><div class="rank-fill" data-w="48"></div></div></div>
+          </div>
+        </div>
+        <div class="chart-card metric-card" data-reveal><div class="metric-number" id="aovNumber">$0.00</div><div class="metric-label">avg. order value</div></div>
+        <div class="chart-card" data-reveal>
+          <h4>Rating distribution</h4><span class="sub">all-time feedback</span>
+          <div class="rating-bars" id="ratingBars">
+            <div class="rating-row"><span class="stars">★★★★★</span><div class="rating-track"><div class="rating-fill" data-w="68"></div></div></div>
+            <div class="rating-row"><span class="stars">★★★★</span><div class="rating-track"><div class="rating-fill" data-w="22"></div></div></div>
+            <div class="rating-row"><span class="stars">★★★</span><div class="rating-track"><div class="rating-fill" data-w="7"></div></div></div>
+            <div class="rating-row"><span class="stars">★★</span><div class="rating-track"><div class="rating-fill" data-w="2"></div></div></div>
+            <div class="rating-row"><span class="stars">★</span><div class="rating-track"><div class="rating-fill" data-w="1"></div></div></div>
+          </div>
+        </div>
+        <div class="chart-card" data-reveal>
+          <h4>Customer segments</h4><span class="sub">by purchase behavior</span>
+          <div class="donut-wrap">
+            <svg class="donut-svg" width="120" height="120" viewBox="0 0 120 120">
+              <circle cx="60" cy="60" r="46" fill="none" stroke="#1d1d1d" stroke-width="16"/>
+              <circle cx="60" cy="60" r="46" fill="none" stroke="#F2B441" stroke-width="16" stroke-dasharray="86.6 202.2" stroke-dashoffset="0"/>
+              <circle cx="60" cy="60" r="46" fill="none" stroke="#3FE08A" stroke-width="16" stroke-dasharray="115.5 173.3" stroke-dashoffset="-86.6"/>
+              <circle cx="60" cy="60" r="46" fill="none" stroke="#FFB85C" stroke-width="16" stroke-dasharray="57.7 231.1" stroke-dashoffset="-202.1"/>
+              <circle cx="60" cy="60" r="46" fill="none" stroke="#5b5650" stroke-width="16" stroke-dasharray="28.9 260" stroke-dashoffset="-259.8"/>
+            </svg>
+            <div class="donut-legend">
+              <span class="legend-row"><span class="legend-dot" style="background:#F2B441"></span>VIP · 30%</span>
+              <span class="legend-row"><span class="legend-dot" style="background:#3FE08A"></span>Regular · 40%</span>
+              <span class="legend-row"><span class="legend-dot" style="background:#FFB85C"></span>Occasional · 20%</span>
+              <span class="legend-row"><span class="legend-dot" style="background:#5b5650"></span>Inactive · 10%</span>
+            </div>
+          </div>
+        </div>
+        <div class="chart-card dual-gauge" data-reveal>
+          <h4>Loyalty metrics</h4><span class="sub">repeat rate &amp; retention</span>
+          <div class="gauge-row">
+            <div class="gauge">
+              <svg class="gauge-svg" width="100" height="100" viewBox="0 0 100 100">
+                <circle class="gauge-bg" cx="50" cy="50" r="40"/><circle class="gauge-fill" id="gaugeRepeat" cx="50" cy="50" r="40" stroke="#FF6B6B" transform="rotate(-90 50 50)" stroke-dasharray="251.3" stroke-dashoffset="251.3"/>
+                <text x="50" y="55" text-anchor="middle" class="gauge-pct" id="gaugeRepeatText">0%</text>
+              </svg>
+              <span class="gauge-label">Repeat rate</span>
+            </div>
+            <div class="gauge">
+              <svg class="gauge-svg" width="100" height="100" viewBox="0 0 100 100">
+                <circle class="gauge-bg" cx="50" cy="50" r="40"/><circle class="gauge-fill" id="gaugeRetention" cx="50" cy="50" r="40" stroke="#3FE08A" transform="rotate(-90 50 50)" stroke-dasharray="251.3" stroke-dashoffset="251.3"/>
+                <text x="50" y="55" text-anchor="middle" class="gauge-pct" id="gaugeRetentionText">0%</text>
+              </svg>
+              <span class="gauge-label">Retention</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section crm" id="crm">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">CRM, built in</span>
+      <h2>Know every customer, without lifting a finger.</h2>
+      <p>FeastIQ quietly turns order history into customer intelligence — no separate CRM tool required.</p>
+    </div>
+    <div class="crm-grid">
+      <article class="crm-card" data-reveal>
+        <h3>Customer Segmentation</h3><p>Every customer is automatically classified by behavior.</p>
+        <div class="buckets">
+          <div class="bucket vip"><span class="bucket-label">VIP</span><div class="bucket-dots"><span></span><span></span><span></span><span></span></div></div>
+          <div class="bucket regular"><span class="bucket-label">Regular</span><div class="bucket-dots"><span></span><span></span><span></span><span></span><span></span></div></div>
+          <div class="bucket occasional"><span class="bucket-label">Occasional</span><div class="bucket-dots"><span></span><span></span><span></span></div></div>
+          <div class="bucket inactive"><span class="bucket-label">Inactive</span><div class="bucket-dots"><span></span><span></span></div></div>
+        </div>
+      </article>
+      <article class="crm-card" data-reveal>
+        <h3>Customer Profiles</h3><p>Order history, tracked per customer. Hover the card.</p>
+        <div class="profile-flip" tabindex="0">
+          <div class="profile-inner">
+            <div class="profile-face front">
+              <div class="profile-avatar">JD</div>
+              <div style="font-size:.85rem;font-weight:600;margin-top:.5rem">Jordan D.</div>
+              <span class="profile-tag">VIP</span>
+              <div class="profile-hint">hover to flip →</div>
+            </div>
+            <div class="profile-face back">
+              <div class="timeline-row"><span>Jun 18</span><span>Cheeseburger combo</span></div>
+              <div class="timeline-row"><span>Jun 09</span><span>Margherita Pizza</span></div>
+              <div class="timeline-row"><span>May 27</span><span>Loaded Fries</span></div>
+              <div class="profile-hint">14 orders all-time</div>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="crm-card" data-reveal>
+        <h3>Behavior Analytics</h3><p>Spot ordering patterns as they form.</p>
+        <div class="spark-wrap">
+          <svg viewBox="0 0 220 70" width="100%" height="70">
+            <polyline class="spark-path" points="0,55 25,45 50,50 75,30 100,38 125,18 150,28 175,10 200,20 220,8" fill="none" stroke="#2ECC71" stroke-width="3" stroke-linecap="round" stroke-linejoin:round"/>
+          </svg>
+          <p style="font-size:.78rem;margin-top:.4rem">Order frequency, trending up week over week.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section tech" id="tech">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Under the hood</span>
+      <h2>Built for reliability, not just a demo.</h2>
+      <p>The engineering decisions that keep orders, prices, and statuses trustworthy.</p>
+    </div>
+    <div class="tech-grid">
+      <div class="tech-tile" data-reveal><span class="t-icon">⚡</span><span class="t-text">RESTful API built with <code>Flask</code></span></div>
+      <div class="tech-tile" data-reveal><span class="t-icon">🗄️</span><span class="t-text"><code>SQLite</code> database, swappable to <code>PostgreSQL</code></span></div>
+      <div class="tech-tile" data-reveal><span class="t-icon">🛡️</span><span class="t-text">Server-side validation on every request</span></div>
+      <div class="tech-tile" data-reveal><span class="t-icon">🧊</span><span class="t-text">Price snapshotting locks in order totals</span></div>
+      <div class="tech-tile" data-reveal><span class="t-icon">🔁</span><span class="t-text">Strict status transition enforcement</span></div>
+      <div class="tech-tile" data-reveal><span class="t-icon">🔑</span><span class="t-text"><code>JWT</code>-secured staff authentication</span></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<section class="cta" id="get-feastiq">
+  <div class="wrap">
+    <div class="cta-emoji-row" aria-hidden="true"><span>🍔</span><span>🍕</span><span>🥤</span><span>🧁</span></div>
+    <h2>Ready to feed smarter?</h2>
+    <p>Bring ordering, tracking, and customer intelligence together — in one platform.</p>
+    <div style="display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap;margin-top:2rem">
+      <a href="customer/index.html" class="btn btn-primary">Try FeastIQ</a>
+      <a href="admin/login.html" class="btn btn-outline">Book a Demo</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <div>
+      <div class="nav-logo" style="color:var(--cream)">FeastIQ<span class="dot">.</span></div>
+      <div class="footer-tag">Ordering platform + CRM, in one.</div>
+    </div>
+    <div class="footer-links">
+      <a href="#customers">Customers</a><a href="#admin">Restaurants</a><a href="#crm">CRM</a><a href="#tech">Tech</a>
+    </div>
+    <div class="footer-social" aria-hidden="true">
+      <a href="#" aria-label="Twitter">𝕏</a><a href="#" aria-label="Instagram">◎</a><a href="#" aria-label="LinkedIn">in</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+var reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var navToggle=document.getElementById('navToggle'),navMobile=document.getElementById('navMobile');
+if(navToggle){navToggle.addEventListener('click',function(){var o=navMobile.classList.toggle('open');navToggle.setAttribute('aria-expanded',o?'true':'false');});navMobile.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){navMobile.classList.remove('open');navToggle.setAttribute('aria-expanded','false');});});}
+var starRow=document.getElementById('starRow');
+if(starRow){var stars=starRow.querySelectorAll('button');stars.forEach(function(btn,idx){btn.addEventListener('click',function(){stars.forEach(function(s,i){s.classList.toggle('active',i<=idx);});});});}
+var submitDemo=document.getElementById('submitDemo');
+if(submitDemo){submitDemo.addEventListener('click',function(){submitDemo.classList.add('done');setTimeout(function(){submitDemo.classList.remove('done');},2400);});}
+function animateCount(el,target,opts){opts=opts||{};var prefix=opts.prefix||'',suffix=opts.suffix||'',decimals=opts.decimals||0,duration=reduceMotion?1:(opts.duration||1300),start=performance.now();function tick(now){var p=Math.min(1,(now-start)/duration),eased=1-Math.pow(1-p,3);el.textContent=prefix+(target*eased).toFixed(decimals)+suffix;if(p<1)requestAnimationFrame(tick);}requestAnimationFrame(tick);}
+var revealEls=document.querySelectorAll('[data-reveal]'),ranOnce=new WeakSet();
+function runChartAnimations(el){if(ranOnce.has(el))return;ranOnce.add(el);
+var trend=el.querySelector('#trendLine');if(trend){var len=trend.getTotalLength();trend.style.strokeDasharray=len;trend.style.strokeDashoffset=len;trend.getBoundingClientRect();trend.style.transition='stroke-dashoffset 1.6s cubic-bezier(.16,1,.3,1)';requestAnimationFrame(function(){trend.style.strokeDashoffset=0;});}
+el.querySelectorAll('#peakBars .bar').forEach(function(b,i){var h=b.getAttribute('data-h');setTimeout(function(){b.style.transform='scaleY('+(h/100)+')';},i*60);});
+el.querySelectorAll('#rankList .rank-fill').forEach(function(r,i){setTimeout(function(){r.style.width=r.getAttribute('data-w')+'%';},i*110);});
+var aov=el.querySelector('#aovNumber');if(aov)animateCount(aov,24.5,{prefix:'$',decimals:2,duration:1400});
+el.querySelectorAll('#ratingBars .rating-fill').forEach(function(r,i){setTimeout(function(){r.style.width=r.getAttribute('data-w')+'%';},i*90);});
+var repeat=el.querySelector('#gaugeRepeat'),repeatText=el.querySelector('#gaugeRepeatText');if(repeat){setTimeout(function(){repeat.style.strokeDashoffset=251.3*(1-0.62);},100);if(repeatText)animateCount(repeatText,62,{suffix:'%',duration:1400});}
+var retention=el.querySelector('#gaugeRetention'),retentionText=el.querySelector('#gaugeRetentionText');if(retention){setTimeout(function(){retention.style.strokeDashoffset=251.3*(1-0.81);},100);if(retentionText)animateCount(retentionText,81,{suffix:'%',duration:1400});}
+}
+if('IntersectionObserver' in window){var io=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add('visible');runChartAnimations(entry.target);}});},{threshold:0.18});revealEls.forEach(function(el){io.observe(el);});}
+else{revealEls.forEach(function(el){el.classList.add('visible');runChartAnimations(el);});}
+})();
+</script>
+</body>
+</html>
