@@ -75,20 +75,7 @@ On the other side, staff get a full back office: menu management, strict order-s
 
 ## 🔄 The Order Lifecycle
 
-```mermaid
-flowchart LR
-    A[🛒 Cart] --> B[📤 Order Placed]
-    B --> C[✅ Confirmed]
-    C --> D[👨‍🍳 Preparing]
-    D --> E[📦 Ready]
-    E --> F[🚚 Delivered]
-    F --> G[⭐ Feedback]
-
-    style A fill:#7C9CFF,stroke:#5C7CFA,color:#0f1226
-    style D fill:#9D8CFF,stroke:#7B61FF,color:#0f1226
-    style F fill:#5EE7C8,stroke:#4FD1B8,color:#0f1226
-    style G fill:#7C9CFF,stroke:#5C7CFA,color:#0f1226
-```
+<img src="./order-lifecycle.svg" alt="Order lifecycle: Cart to Feedback" width="100%"/>
 
 Status only ever moves forward — there's no skipping steps, and the server (not the client) owns every transition.
 
